@@ -1,0 +1,793 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <!-- SEO Optimization -->
+  <title>High School Golf Analytics | High School Golf Coach Dashboard & Season Tracker</title>
+  <meta name="description" content="A premium, state-of-the-art golf season tracker and performance statistics dashboard for high school coaches. Manage Varsity and JV match schedules, calculate consistency ratings, stroke averages, and visualize team progress.">
+  <meta name="author" content="Antigravity Golf Coach Tools">
+  
+  <!-- Tailwind CSS: NOT used as requested, fully powered by premium Vanilla CSS in styles.css -->
+  <link rel="stylesheet" href="styles.css">
+  
+  <!-- Chart.js CDN for visual data representations -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  
+  <!-- Lucide Icons CDN for consistent, clean vector iconography -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+</head>
+<body>
+
+  <div class="app-container">
+    
+    <!-- ==========================================================================
+         Sidebar Navigation
+         ========================================================================== -->
+    <aside class="sidebar">
+      <div class="logo-container">
+        <div class="logo-icon">
+          <!-- Custom SVG golf ball icon -->
+          <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="12" cy="12" r="10"></circle>
+            <path d="M12 2a14.5 14.5 0 0 0 0 20 14.5 14.5 0 0 0 0-20"></path>
+            <path d="M2 12a14.5 14.5 0 0 0 20 0 14.5 14.5 0 0 0-20 0"></path>
+          </svg>
+        </div>
+        <div>
+          <span class="logo-text">High School Golf</span>
+          <span class="logo-subtext">Analytics</span>
+        </div>
+      </div>
+      
+      <!-- Nav Menu Items -->
+      <nav class="nav-menu">
+        <div class="nav-item active" id="nav-dashboard" data-tab="dashboard" onclick="navigateTo('dashboard')">
+          <i data-lucide="layout-dashboard"></i>
+          <span>Dashboard</span>
+        </div>
+        <div class="nav-item" id="nav-schedule" data-tab="schedule" onclick="navigateTo('schedule')">
+          <i data-lucide="calendar"></i>
+          <span>Season Schedule</span>
+        </div>
+        <div class="nav-item" id="nav-scoreboard" data-tab="scoreboard" onclick="navigateTo('scoreboard')">
+          <i data-lucide="sheet"></i>
+          <span>Season Scoreboard</span>
+        </div>
+        <div class="nav-item" id="nav-roster" data-tab="roster" onclick="navigateTo('roster')">
+          <i data-lucide="users"></i>
+          <span>Roster Cards</span>
+        </div>
+        <div class="nav-item" id="nav-metrics" data-tab="metrics" onclick="navigateTo('metrics')">
+          <i data-lucide="bar-chart-3"></i>
+          <span>Scoring Metrics</span>
+        </div>
+      </nav>
+      
+      <!-- Sidebar Footer Controls -->
+      <div class="sidebar-footer">
+        <div class="team-selector">
+          <button class="team-btn active" id="btn-team-varsity" data-team="Varsity" onclick="switchTeam('Varsity')">Varsity</button>
+          <button class="team-btn" id="btn-team-jv" data-team="JV" onclick="switchTeam('JV')">JV</button>
+        </div>
+        
+        <button class="theme-toggle-btn" id="btn-quick-player" onclick="openModal('quick-player-modal')">
+          <i data-lucide="user-plus"></i>
+          <span>Quick Player</span>
+        </button>
+      </div>
+    </aside>
+    
+    <!-- ==========================================================================
+         Main Workspace Contents
+         ========================================================================== -->
+    <main class="main-content">
+      
+      <!-- Main Title Header Row -->
+      <header class="header-row">
+        <div class="header-title-group">
+          <h1 id="main-header-title">High School Golf Coach Portal</h1>
+          <p id="team-subtitle">Varsity Team Roster & Matches</p>
+        </div>
+        
+        <!-- Top Navigation Actions -->
+        <div class="header-actions">
+          <button class="btn btn-secondary" id="btn-export-db">
+            <i data-lucide="download"></i>
+            <span>Backup Data</span>
+          </button>
+          <label class="btn btn-secondary" style="cursor:pointer; margin:0;" id="label-import-db">
+            <i data-lucide="upload"></i>
+            <span>Restore Backup</span>
+            <input type="file" id="input-import-db" accept=".json" style="display:none;">
+          </label>
+          <button class="btn btn-primary" id="btn-record-match" onclick="initNewMatchModal()">
+            <i data-lucide="plus-circle"></i>
+            <span>Record Match</span>
+          </button>
+        </div>
+      </header>
+      
+      <!-- Dynamic Data Operations Panel -->
+      <section class="backup-section">
+        <div class="backup-section-text">
+          <h4>Need to reset or load mock data?</h4>
+          <p>You can restore your season grid to default data matching your screenshot roster at any time.</p>
+        </div>
+        <button class="btn btn-danger" style="padding: 6px 12px; font-size:12px;" onclick="resetDatabase()">
+          <i data-lucide="refresh-cw"></i>
+          <span>Reset defaults</span>
+        </button>
+      </section>
+
+      <!-- ==========================================================================
+           TAB VIEW: 1. DASHBOARD OVERVIEW
+           ========================================================================== -->
+      <div id="tab-dashboard" class="tab-content active">
+        <!-- Roster statistics cards -->
+        <div class="stats-grid">
+          <div class="glass-card stat-card">
+            <span class="stat-card-title">Season Wins</span>
+            <div class="stat-card-value trend-down" id="dash-wins">-</div>
+            <div class="stat-card-footer">
+              <i data-lucide="trophy" style="width:14px;height:14px;color:var(--color-win)"></i>
+              <span>Match victories</span>
+            </div>
+          </div>
+          <div class="glass-card stat-card">
+            <span class="stat-card-title">Season Losses</span>
+            <div class="stat-card-value trend-up" id="dash-losses">-</div>
+            <div class="stat-card-footer">
+              <i data-lucide="frown" style="width:14px;height:14px;color:var(--color-lose)"></i>
+              <span>Close encounters</span>
+            </div>
+          </div>
+          <div class="glass-card stat-card">
+            <span class="stat-card-title">Tournaments</span>
+            <div class="stat-card-value" id="dash-tourneys">-</div>
+            <div class="stat-card-footer">
+              <i data-lucide="award" style="width:14px;height:14px;"></i>
+              <span>Multi-school matches</span>
+            </div>
+          </div>
+          <div class="glass-card stat-card">
+            <span class="stat-card-title">Team Stroke Avg</span>
+            <div class="stat-card-value" id="dash-avg-score">-</div>
+            <div class="stat-card-footer">
+              <i data-lucide="sparkles" style="width:14px;height:14px;color:var(--color-accent)"></i>
+              <span>Scoring average</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="dashboard-grid-layout" style="margin-top: 24px;">
+          <!-- Column 1: Top & Bottom Varsity Players -->
+          <div class="dash-column" style="display:flex; flex-direction:column; gap:24px;">
+            <div class="glass-card" style="margin: 0;">
+              <div class="card-header">
+                <h2>Top Varsity Players</h2>
+                <span class="badge badge-win">Varsity</span>
+              </div>
+              <div class="spreadsheet-container compact-table" style="border:none; margin-top:8px;">
+                <table class="grid-sheet compact-sheet">
+                  <thead>
+                    <tr>
+                      <th style="width:40px;">Seed</th>
+                      <th style="text-align:left;">Player</th>
+                      <th>Rounds</th>
+                      <th>Last</th>
+                      <th>Avg</th>
+                    </tr>
+                  </thead>
+                  <tbody id="dash-varsity-top">
+                    <!-- Rendered dynamically in app.js -->
+                  </tbody>
+                </table>
+              </div>
+            </div>
+
+            <div class="glass-card" style="margin: 0;">
+              <div class="card-header">
+                <h2>Bottom Varsity Players</h2>
+                <span class="badge badge-lose">Varsity</span>
+              </div>
+              <div class="spreadsheet-container compact-table" style="border:none; margin-top:8px;">
+                <table class="grid-sheet compact-sheet">
+                  <thead>
+                    <tr>
+                      <th style="width:40px;">Seed</th>
+                      <th style="text-align:left;">Player</th>
+                      <th>Rounds</th>
+                      <th>Last</th>
+                      <th>Avg</th>
+                    </tr>
+                  </thead>
+                  <tbody id="dash-varsity-bottom">
+                    <!-- Rendered dynamically in app.js -->
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+
+          <!-- Column 2: Scoring Metrics & Top JV Players -->
+          <div class="dash-column" style="display:flex; flex-direction:column; gap:24px;">
+            <div class="glass-card" style="margin: 0;">
+              <div class="card-header">
+                <h2>Scoring Metrics Summary</h2>
+                <i data-lucide="bar-chart-3" style="width:16px;height:16px;color:var(--color-accent);"></i>
+              </div>
+              <div class="spreadsheet-container compact-table" style="border:none; margin-top:8px; max-height:220px; overflow-y:auto;">
+                <table class="grid-sheet compact-sheet">
+                  <thead>
+                    <tr>
+                      <th style="text-align:left;">Player</th>
+                      <th>Rds</th>
+                      <th>Avg</th>
+                      <th>FW %</th>
+                      <th>GIR %</th>
+                      <th>UD</th>
+                      <th>Putt</th>
+                    </tr>
+                  </thead>
+                  <tbody id="dash-scoring-metrics-body">
+                    <!-- Rendered dynamically in app.js -->
+                  </tbody>
+                </table>
+              </div>
+            </div>
+
+            <div class="glass-card" style="margin: 0;">
+              <div class="card-header">
+                <h2>Top JV Players</h2>
+                <span class="badge badge-override">JV</span>
+              </div>
+              <div class="spreadsheet-container compact-table" style="border:none; margin-top:8px;">
+                <table class="grid-sheet compact-sheet">
+                  <thead>
+                    <tr>
+                      <th style="width:40px;">Seed</th>
+                      <th style="text-align:left;">Player</th>
+                      <th>Rounds</th>
+                      <th>Last</th>
+                      <th>Avg</th>
+                    </tr>
+                  </thead>
+                  <tbody id="dash-jv-top">
+                    <!-- Rendered dynamically in app.js -->
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="glass-card" style="margin-top:24px;">
+          <div class="card-header">
+            <h2>Recent Match Log</h2>
+            <i data-lucide="history" style="width:16px;height:16px;color:var(--color-text-muted);"></i>
+          </div>
+          <div class="recent-match-list" id="dash-recent-matches">
+            <!-- Dynamic Recent list -->
+          </div>
+        </div>
+      </div>
+
+      <!-- ==========================================================================
+           TAB VIEW: 2. SEASON SCHEDULE (SIDE-BY-SIDE GRIDS)
+           ========================================================================== -->
+      <!-- ==========================================================================
+           TAB VIEW: 2. SEASON SCHEDULE (SINGLE VIEW FILTERED BY SELECTED TEAM)
+           ========================================================================== -->
+      <div id="tab-schedule" class="tab-content">
+        <div class="glass-card" style="margin-bottom:0;">
+          <div class="card-header" style="border-bottom:none; margin-bottom:0; padding-bottom:0;">
+            <h2 id="schedule-header-title">Varsity Schedule</h2>
+            <button class="btn btn-secondary" style="padding:6px 12px; font-size:12px;" onclick="initNewScheduleModal()">
+              <i data-lucide="plus-circle" style="width:14px;height:14px;"></i>
+              <span>Add Schedule Entry</span>
+            </button>
+          </div>
+          <div class="spreadsheet-container" style="margin-top:16px; border:none;" id="schedule-table-container">
+            <!-- Rendered dynamically in app.js -->
+          </div>
+        </div>
+      </div>
+
+      <!-- ==========================================================================
+           TAB VIEW: 2B. SEASON SCOREBOARD (SPREADSHEET GRID)
+           ========================================================================== -->
+      <div id="tab-scoreboard" class="tab-content">
+        <div class="glass-card">
+          <div class="card-header" style="display: flex; justify-content: space-between; align-items: center; gap: 16px; flex-wrap: wrap;">
+            <div>
+              <h2>Seasonal Match Scoreboard Sheet</h2>
+              <span style="font-size:12px;color:var(--color-text-muted);">Scroll horizontally to view matches. Click a player name to view detailed stats.</span>
+            </div>
+            <button class="btn btn-secondary" style="padding: 6px 12px; font-size: 12px; height: 32px;" onclick="initNewMatchModal()">
+              <i data-lucide="plus-circle" style="width: 14px; height: 14px;"></i>
+              <span>Add Match to Scoreboard</span>
+            </button>
+          </div>
+          <div class="spreadsheet-container" id="schedule-spreadsheet-wrapper">
+            <!-- Dynamic spreadsheet layout generated in app.js -->
+          </div>
+        </div>
+      </div>
+
+
+      <!-- ==========================================================================
+           TAB VIEW: 3. ROSTER CARDS
+           ========================================================================== -->
+      <div id="tab-roster" class="tab-content">
+        <div class="player-cards-grid" id="roster-cards-grid">
+          <!-- Dynamic cards generated in app.js -->
+        </div>
+      </div>
+
+      <!-- ==========================================================================
+           TAB VIEW: 4. SCORING METRICS
+           ========================================================================== -->
+      <div id="tab-metrics" class="tab-content">
+        <div class="glass-card">
+          <div class="card-header">
+            <h2>Player Scoring Metrics</h2>
+            <span style="font-size:12px;color:var(--color-text-muted);">Calculated over active season rounds. Click header items to expand.</span>
+          </div>
+          <div class="spreadsheet-container">
+            <table class="grid-sheet">
+              <thead>
+                <tr>
+                  <th class="col-player">Name</th>
+                  <th>Rounds</th>
+                  <th>Avg Score</th>
+                  <th>Avg FW</th>
+                  <th>FW %</th>
+                  <th>Avg GIR</th>
+                  <th>GIR %</th>
+                  <th>Avg UD</th>
+                  <th>Avg Putts</th>
+                  <th>Avg Pen</th>
+                </tr>
+              </thead>
+              <tbody id="metrics-table-body">
+                <!-- Dynamic scoring metrics rendered in app.js -->
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- ==========================================================================
+           TAB VIEW: 5. DEDICATED MATCH SCOREBOARD & LEADERBOARD PORTAL
+           ========================================================================== -->
+      <div id="tab-match-scoreboard" class="tab-content">
+        <!-- Header details -->
+        <div class="glass-card" style="padding:20px; display:flex; justify-content:space-between; align-items:center;">
+          <div>
+            <button class="btn btn-secondary" onclick="navigateTo('schedule')" style="padding:6px 12px; font-size:12px; margin-bottom:8px;">
+              <i data-lucide="arrow-left" style="width:14px;height:14px;"></i>
+              <span>Back to Scoreboard</span>
+            </button>
+            <h2 id="scoreboard-match-title" style="font-family:var(--font-header); font-size:24px; font-weight:800;">MIHS vs Liberty HS</h2>
+            <p id="scoreboard-match-subtitle" style="font-size:13px; color:var(--color-text-muted); margin-top:2px;">4/1 Varsity Match @ Maplewood Golf Course</p>
+          </div>
+          <button class="btn btn-primary" onclick="initEditMatchModal(currentMatchId)">
+            <i data-lucide="edit-3"></i>
+            <span>Edit Scoreboard</span>
+          </button>
+        </div>
+
+        <!-- 1st Screenshot View: Dynamic Hole-by-Hole Grid Roster -->
+        <div class="glass-card">
+          <div class="card-header">
+            <h2>Match Hole-by-Hole Spreadsheet</h2>
+            <span style="font-size:12px; color:var(--color-text-muted);">Scores colored relative to Par: <span class="birdie-cell">Red (Birdie/-1)</span> • White (Par) • <span class="bogey-cell">Gray (Bogey/+1)</span></span>
+          </div>
+          <div class="spreadsheet-container" id="scoreboard-spreadsheet-wrapper">
+            <!-- Rendered in app.js -->
+          </div>
+        </div>
+
+        <!-- 2nd Screenshot View: Standings & Leaderboards Split Portal -->
+        <div class="scoreboard-split-grid">
+          <!-- Left side: Player overall rankings leaderboard -->
+          <div class="glass-card" style="margin-bottom:0;">
+            <div class="card-header">
+              <h2>Match Leaderboard</h2>
+              <i data-lucide="trophy" style="width:16px;height:16px;color:#eab308;"></i>
+            </div>
+            <div class="spreadsheet-container" style="max-height: 380px; overflow-y: auto;">
+              <table class="grid-sheet">
+                <thead>
+                  <tr>
+                    <th>Rank</th>
+                    <th style="text-align:left;">Player</th>
+                    <th>School</th>
+                    <th>Score</th>
+                  </tr>
+                </thead>
+                <tbody id="scoreboard-leaderboard-list">
+                  <!-- Rendered dynamically -->
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          <!-- Right side: School Standing Card + Top 5 Cards -->
+          <div style="display:flex; flex-direction:column; gap:24px;">
+            <!-- standing card -->
+            <div class="glass-card" id="scoreboard-standing-block" style="margin-bottom:0; display:flex; justify-content:space-around; align-items:center; padding:20px;">
+              <!-- School standings block rendered dynamically -->
+            </div>
+            
+            <!-- Side-by-side Top 5 Scorecards -->
+            <div class="top5-card-grid" id="scoreboard-top5-grids">
+              <!-- School cards rendered dynamically -->
+            </div>
+          </div>
+      </div>
+    </div>
+
+      <!-- ==========================================================================
+           TAB VIEW: 6. DEDICATED PLAYER PROFILE PORTAL
+           ========================================================================== -->
+      <div id="tab-player-profile" class="tab-content">
+        <!-- Header Row with Back Button -->
+        <div class="glass-card" style="padding:20px; display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:16px;">
+          <div>
+            <button class="btn btn-secondary" onclick="navigateBack()" style="padding:6px 12px; font-size:12px; margin-bottom:8px;">
+              <i data-lucide="arrow-left" style="width:14px;height:14px;"></i>
+              <span>Back</span>
+            </button>
+            <h2 id="player-profile-title" style="font-family:var(--font-header); font-size:24px; font-weight:800; color:var(--color-text-primary);">Ariel Yang</h2>
+            <p id="player-profile-subtitle" style="font-size:13px; color:var(--color-text-muted); margin-top:2px;">Varsity Team • Sophomore</p>
+          </div>
+        </div>
+
+        <!-- Upper section: spreadsheet table on the left, grouped stats bar chart on the right -->
+        <!-- Dynamic 2-Column layout: spreadsheet table on the left, charts container on the right -->
+        <div class="player-profile-grid-top" style="display: grid; grid-template-columns: 1.2fr 1.8fr; gap: 24px; margin-top: 24px; align-items: start;">
+          
+          <!-- Spreadsheet Table Card (styled light as in screenshot) -->
+          <div class="glass-card" style="margin: 0; background: white; color: #1e293b; padding: 16px; border: 1px solid #cbd5e1; border-radius:12px; overflow-x: auto;">
+            <div class="spreadsheet-container" style="border: 1px solid #cbd5e1; border-radius: 6px; overflow: hidden; background: white;">
+              <table class="grid-sheet" style="width: 100%; border-collapse: collapse; background: white; color: #1e293b; text-align: center;">
+                <thead>
+                  <tr style="background-color: #cbd5e1; color: #1e293b; font-weight: 700;">
+                    <th style="text-align: left; padding: 8px; border: 1px solid #94a3b8; font-family:var(--font-header); font-size:12px;">Name</th>
+                    <th style="padding: 8px; border: 1px solid #94a3b8; font-family:var(--font-header); font-size:12px;">Date</th>
+                    <th style="padding: 8px; border: 1px solid #94a3b8; font-family:var(--font-header); font-size:12px;">FW</th>
+                    <th style="padding: 8px; border: 1px solid #94a3b8; font-family:var(--font-header); font-size:12px;">GIR</th>
+                    <th style="padding: 8px; border: 1px solid #94a3b8; font-family:var(--font-header); font-size:12px;">Putts</th>
+                    <th style="padding: 8px; border: 1px solid #94a3b8; font-family:var(--font-header); font-size:12px;">UD</th>
+                    <th style="padding: 8px; border: 1px solid #94a3b8; font-family:var(--font-header); font-size:12px;">Pen</th>
+                    <th style="padding: 8px; border: 1px solid #94a3b8; font-family:var(--font-header); font-size:12px;">Score</th>
+                  </tr>
+                </thead>
+                <tbody id="player-profile-table-body">
+                  <!-- Generated dynamically in app.js -->
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          <!-- Right-hand Charts Container -->
+          <div style="display: flex; flex-direction: column; gap: 24px;">
+            <!-- Grouped Bar Chart Card -->
+            <div class="glass-card" style="margin: 0; background: white; color: #1e293b; padding: 16px; border: 1px solid #cbd5e1; border-radius:12px; min-height: 320px; display: flex; flex-direction: column;">
+              <div style="font-family: var(--font-header); font-size: 16px; font-weight: 600; margin-bottom: 12px; color: #334155;">FW, G.I.R and Up and Downs</div>
+              <div style="flex-grow: 1; position: relative; height: 260px;">
+                <canvas id="profileGroupedBarChart"></canvas>
+              </div>
+            </div>
+
+            <!-- Nested Row of Two Charts (Score & Putting) -->
+            <div class="player-profile-grid-bottom" style="display: grid; grid-template-columns: 1fr 1fr; gap: 24px;">
+              <!-- Score Chart -->
+              <div class="glass-card" style="margin: 0; background: white; color: #1e293b; padding: 16px; border: 1px solid #cbd5e1; border-radius:12px; min-height: 220px; display: flex; flex-direction: column;">
+                <div style="font-family: var(--font-header); font-size: 16px; font-weight: 600; margin-bottom: 12px; color: #334155;">Score</div>
+                <div style="flex-grow: 1; position: relative; height: 160px;">
+                  <canvas id="profileScoreBarChart"></canvas>
+                </div>
+              </div>
+
+              <!-- Putting Chart -->
+              <div class="glass-card" style="margin: 0; background: white; color: #1e293b; padding: 16px; border: 1px solid #cbd5e1; border-radius:12px; min-height: 220px; display: flex; flex-direction: column;">
+                <div style="font-family: var(--font-header); font-size: 16px; font-weight: 600; margin-bottom: 12px; color: #334155;">Putting</div>
+                <div style="flex-grow: 1; position: relative; height: 160px;">
+                  <canvas id="profilePuttingBarChart"></canvas>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </main>
+  </div>
+
+  <!-- ==========================================================================
+       MODAL: PLAYER PERFORMANCE DETAIL CARD
+       ========================================================================== -->
+  <div class="modal-backdrop" id="player-profile-modal">
+    <div class="modal-content" style="max-width:800px;">
+      <div class="modal-header">
+        <div>
+          <h3 id="profile-player-name">Player Name</h3>
+          <span style="font-size:12px;color:var(--color-text-muted);" id="profile-player-team">Varsity Team</span>
+        </div>
+        <button class="close-btn" onclick="closeModal('player-profile-modal')">
+          <i data-lucide="x"></i>
+        </button>
+      </div>
+
+      <!-- Statistics block -->
+      <div class="stats-grid" style="grid-template-columns: repeat(3, 1fr);">
+        <div class="glass-card stat-card" style="padding:16px; margin:0; background:rgba(0,0,0,0.15)">
+          <span class="stat-card-title">Stroke Avg</span>
+          <div class="stat-card-value" id="profile-avg">-</div>
+          <div class="stat-card-footer">Rounds: <span id="profile-rounds">0</span></div>
+        </div>
+        <div class="glass-card stat-card" style="padding:16px; margin:0; background:rgba(0,0,0,0.15)">
+          <span class="stat-card-title">Lowest Score</span>
+          <div class="stat-card-value trend-down" id="profile-lowest">-</div>
+          <div class="stat-card-footer">Highest: <span id="profile-highest">-</span></div>
+        </div>
+        <div class="glass-card stat-card" style="padding:16px; margin:0; background:rgba(0,0,0,0.15)">
+          <span class="stat-card-title">Improvement Rate</span>
+          <div class="stat-card-value" id="profile-improvement">-</div>
+          <div class="stat-card-footer">Last score: <span id="profile-last">-</span></div>
+        </div>
+      </div>
+
+      <div style="display:grid; grid-template-columns: 1fr 1fr; gap:24px; margin-top:20px;">
+        <!-- Visual trends chart -->
+        <div class="glass-card" style="margin:0; padding:16px;">
+          <div class="card-header" style="margin-bottom:8px;">
+            <h2>Historical Trend</h2>
+          </div>
+          <div style="height:180px; position:relative;">
+            <canvas id="playerHistoryChart"></canvas>
+          </div>
+        </div>
+        
+        <!-- Score lists logs -->
+        <div class="glass-card" style="margin:0; padding:16px; display:flex; flex-direction:column;">
+          <div class="card-header" style="margin-bottom:8px;">
+            <h2>Historical Rounds</h2>
+          </div>
+          <div id="profile-round-history" style="flex-grow:1; overflow-y:auto; max-height:180px; padding-right:6px;">
+            <!-- Render lists -->
+          </div>
+        </div>
+      </div>
+
+      <!-- Config card items -->
+      <div style="margin-top:20px; display:flex; align-items:center; justify-content:space-between; padding:12px; background:rgba(255,255,255,0.02); border-radius:8px; border:1px solid var(--border-glass-light);">
+        <div style="display:flex; align-items:center; gap:8px;">
+          <input type="checkbox" id="profile-active-highlight" style="width:16px;height:16px;cursor:pointer;">
+          <label for="profile-active-highlight" style="cursor:pointer;font-size:13px;font-weight:600;">Highlight Player in spreadsheet (e.g. JV pull-up highlight)</label>
+        </div>
+        <span class="consistency-badge" id="profile-consistency-badge">-</span>
+        <span style="font-size:12px;color:var(--color-text-muted);display:none;" id="profile-std-dev">-</span>
+      </div>
+
+      <div class="form-actions">
+        <button class="btn btn-secondary" onclick="closeModal('player-profile-modal')">Close Card</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ==========================================================================
+       MODAL: RECORD MATCH (SCHEDULE & SCORING DETAILS)
+       ========================================================================== -->
+  <div class="modal-backdrop" id="record-match-modal">
+    <div class="modal-content" style="max-width:900px;">
+      <div class="modal-header">
+        <h3>Record Match Scores & Statistics</h3>
+        <button class="close-btn" onclick="closeModal('record-match-modal')">
+          <i data-lucide="x"></i>
+        </button>
+      </div>
+      
+      <form id="record-match-form">
+        <input type="hidden" id="match-entry-id">
+        
+        <!-- Modal Tabs -->
+        <div class="modal-tabs">
+          <button type="button" class="modal-tab-btn active" data-tab="details" onclick="switchRecordMatchTab('details')">1. Match Info</button>
+          <button type="button" class="modal-tab-btn" data-tab="lineup" onclick="switchRecordMatchTab('lineup')">2. Select Lineup</button>
+          <button type="button" class="modal-tab-btn" data-tab="hole-entry" onclick="switchRecordMatchTab('hole-entry')">3. Record Hole Scores</button>
+        </div>
+
+        <!-- Tab Pane 1: Match Details -->
+        <div class="modal-tab-pane active" id="match-pane-details">
+          <div class="form-row" id="row-load-scheduled">
+            <div class="form-group" style="grid-column: span 2;">
+              <label for="match-entry-load-scheduled">Load Scheduled Match (Optional)</label>
+              <select class="form-control" id="match-entry-load-scheduled" onchange="loadScheduledMatchData()" style="background: rgba(0,0,0,0.25); border: 1px solid var(--border-glass); color: white;">
+                <option value="">-- Create New Match or Select Schedule --</option>
+                <!-- Scheduled matches listed here -->
+              </select>
+            </div>
+          </div>
+
+          <div class="form-row" style="grid-template-columns: 1fr 1fr 1fr; gap: 16px;">
+            <div class="form-group">
+              <label for="match-entry-status">Match Status</label>
+              <select class="form-control" id="match-entry-status" onchange="toggleMatchStatusFields()" style="background: rgba(0,0,0,0.25); border: 1px solid var(--border-glass); color: white;">
+                <option value="Played">Played (Scores recorded)</option>
+                <option value="Scheduled">Scheduled (Future Match)</option>
+                <option value="DNP">DNP / Cancelled</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label for="match-entry-team">Team Level</label>
+              <select class="form-control" id="match-entry-team" style="background: rgba(0,0,0,0.25); border: 1px solid var(--border-glass); color: white;">
+                <option value="Varsity">Varsity</option>
+                <option value="JV">JV</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label for="match-entry-holes">Holes Played</label>
+              <select class="form-control" id="match-entry-holes" style="background: rgba(0,0,0,0.25); border: 1px solid var(--border-glass); color: white;">
+                <option value="9">9 Holes</option>
+                <option value="18">18 Holes</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label for="match-entry-date">Match Date</label>
+              <input type="date" class="form-control" id="match-entry-date" required>
+            </div>
+            <div class="form-group">
+              <label for="match-entry-course">Golf Course</label>
+              <input type="text" class="form-control" id="match-entry-course" placeholder="e.g. Bill Wright Golf Complex" required>
+            </div>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label for="match-entry-opp-code">Opponent School Code</label>
+              <input type="text" class="form-control" id="match-entry-opp-code" placeholder="e.g. HHS" required>
+            </div>
+            <div class="form-group">
+              <label for="match-entry-opp-name">Opponent School Full Name</label>
+              <input type="text" class="form-control" id="match-entry-opp-name" placeholder="e.g. Highline High School">
+            </div>
+          </div>
+
+          <div class="form-row" style="grid-template-columns: repeat(4, 1fr); gap: 10px;">
+            <div class="form-group">
+              <label for="match-entry-rating">Course Rating</label>
+              <input type="number" class="form-control" id="match-entry-rating" placeholder="67.4" step="0.1">
+            </div>
+            <div class="form-group">
+              <label for="match-entry-slope">Course Slope</label>
+              <input type="number" class="form-control" id="match-entry-slope" placeholder="112">
+            </div>
+            <div class="form-group">
+              <label for="match-entry-yardage">Course Yardage</label>
+              <input type="number" class="form-control" id="match-entry-yardage" placeholder="2680">
+            </div>
+            <div class="form-group">
+              <label for="match-entry-par">Course Par</label>
+              <input type="number" class="form-control" id="match-entry-par" placeholder="36">
+            </div>
+          </div>
+
+          <div class="form-row" id="match-results-row">
+            <div class="form-group">
+              <label for="match-entry-team-score">Our Combined Score (Optional)</label>
+              <input type="number" class="form-control" id="match-entry-team-score" placeholder="e.g. 240 (leave blank to auto-sum holes)">
+            </div>
+            <div class="form-group">
+              <label for="match-entry-opp-score">Opponent Combined Score</label>
+              <input type="number" class="form-control" id="match-entry-opp-score" placeholder="e.g. 327">
+            </div>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label for="match-entry-counting-count">Number of counting scores</label>
+              <input type="number" class="form-control" id="match-entry-counting-count" placeholder="5" min="1" max="10" required>
+            </div>
+            <div class="form-group">
+              <label for="match-entry-override">Outcome Override / Rank (Optional)</label>
+              <input type="text" class="form-control" id="match-entry-override" placeholder="e.g. 5th, Win, Loss, DNP (blank for auto-result)">
+            </div>
+          </div>
+        </div>
+
+        <!-- Tab Pane 2: Lineup & Custom Opponent entries -->
+        <div class="modal-tab-pane" id="match-pane-lineup">
+          <div id="match-entry-players-list" style="margin-bottom:20px; max-height:220px; overflow-y:auto; padding-right:6px; background:rgba(0,0,0,0.1); border-radius:8px; border:1px solid var(--border-glass-light);">
+            <!-- Dynamically populated roster checklist -->
+          </div>
+          
+          <!-- Add custom opponent section (matches LHS lists) -->
+          <div style="border-top:1px solid var(--border-glass-light); padding-top:16px;">
+            <h4 style="font-family:var(--font-header); font-size:14px; margin-bottom:12px;">Add Opponent Team Lineup (e.g. Liberty HS players)</h4>
+            <div id="match-entry-opp-players" style="max-height:180px; overflow-y:auto; padding-right:6px; margin-bottom:12px;">
+              <!-- Row items generated dynamically -->
+            </div>
+            <button type="button" class="add-opp-row-btn" onclick="addOpponentEntryRow()">
+              <i data-lucide="plus" style="width:14px;height:14px;"></i>
+              <span>Add Opponent Player</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- Tab Pane 3: 9-Hole Entry Grid Matrix -->
+        <div class="modal-tab-pane" id="match-pane-hole-entry">
+          <div style="font-size:12px; color:var(--color-text-muted); margin-bottom:16px;">
+            Enter 9-hole stroke scores below. The system automatically aggregates totals and computes consistency metrics.
+          </div>
+          <div class="spreadsheet-container" style="max-height:350px; overflow-y:auto;" id="match-entry-hole-grid-container">
+            <!-- Dynamically populated scorecard matrix row lists -->
+          </div>
+        </div>
+
+        <div class="form-actions" style="display: flex; justify-content: space-between; align-items: center;">
+          <div>
+            <button type="button" class="btn btn-danger" id="btn-delete-match" onclick="handleDeleteMatch()" style="display: none; padding: 10px 20px;">
+              <i data-lucide="trash-2" style="width: 14px; height: 14px; margin-right: 4px;"></i>
+              <span>Delete Entry</span>
+            </button>
+          </div>
+          <div style="display: flex; gap: 12px;">
+            <button type="button" class="btn btn-secondary" onclick="closeModal('record-match-modal')">Cancel</button>
+            <button type="submit" class="btn btn-primary">Save Scoreboard</button>
+          </div>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- ==========================================================================
+       MODAL: QUICK ADD PLAYER TO ROSTER
+       ========================================================================== -->
+  <div class="modal-backdrop" id="quick-player-modal">
+    <div class="modal-content" style="max-width:480px;">
+      <div class="modal-header">
+        <h3>Add Player to Team</h3>
+        <button class="close-btn" onclick="closeModal('quick-player-modal')">
+          <i data-lucide="x"></i>
+        </button>
+      </div>
+      
+      <form id="quick-player-form">
+        <div class="form-group">
+          <label for="quick-player-name">Player Full Name</label>
+          <input type="text" class="form-control" id="quick-player-name" placeholder="e.g. Jessica Lin" required>
+        </div>
+        
+        <div class="form-group" style="display:flex; align-items:center; gap:20px; padding:12px 0;">
+          <div style="display:flex; align-items:center; gap:8px;">
+            <input type="radio" name="quick-team" id="quick-player-varsity" checked style="width:16px;height:16px;">
+            <label for="quick-player-varsity" style="margin-bottom:0; cursor:pointer;">Varsity Team</label>
+          </div>
+          <div style="display:flex; align-items:center; gap:8px;">
+            <input type="radio" name="quick-team" id="quick-player-jv" style="width:16px;height:16px;">
+            <label for="quick-player-jv" style="margin-bottom:0; cursor:pointer;">JV Team</label>
+          </div>
+        </div>
+
+        <div class="form-actions">
+          <button type="button" class="btn btn-secondary" onclick="closeModal('quick-player-modal')">Cancel</button>
+          <button type="submit" class="btn btn-primary">Add to Roster</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Core Javascript imports order -->
+  <script src="data.js"></script>
+  <script src="app.js"></script>
+
+</body>
+</html>
