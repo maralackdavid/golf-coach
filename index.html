@@ -165,38 +165,34 @@
            TAB VIEW: 1. DASHBOARD OVERVIEW
            ========================================================================== -->
       <div id="tab-dashboard" class="tab-content active">
-        <!-- Roster statistics cards -->
-        <div class="stats-grid">
+        <!-- Consolidated high-density statistics cards -->
+        <div class="stats-grid" style="grid-template-columns: repeat(2, 1fr); gap: 24px;">
+          <!-- Card 1: Season Record (Wins & Losses Consolidated) -->
           <div class="glass-card stat-card">
-            <span class="stat-card-title">Season Wins</span>
-            <div class="stat-card-value trend-down" id="dash-wins">-</div>
-            <div class="stat-card-footer">
+            <span class="stat-card-title">Season Record</span>
+            <div class="stat-card-value" style="display: flex; align-items: baseline; gap: 4px; margin-top: 8px;">
+              <span id="dash-wins" class="trend-down" style="font-size: 32px; font-weight: 800;">-</span>
+              <span style="font-size: 16px; color: var(--color-text-muted); font-weight: 500; margin-right: 8px;">W</span>
+              <span style="font-size: 26px; color: var(--color-text-muted); font-weight: 300; margin: 0 4px;">/</span>
+              <span id="dash-losses" class="trend-up" style="font-size: 32px; font-weight: 800;">-</span>
+              <span style="font-size: 16px; color: var(--color-text-muted); font-weight: 500;">L</span>
+            </div>
+            <div class="stat-card-footer" style="margin-top: 12px;">
               <i data-lucide="trophy" style="width:14px;height:14px;color:var(--color-win)"></i>
-              <span>Match victories</span>
+              <span>Match victories & close encounters</span>
             </div>
           </div>
-          <div class="glass-card stat-card">
-            <span class="stat-card-title">Season Losses</span>
-            <div class="stat-card-value trend-up" id="dash-losses">-</div>
-            <div class="stat-card-footer">
-              <i data-lucide="frown" style="width:14px;height:14px;color:var(--color-lose)"></i>
-              <span>Close encounters</span>
-            </div>
-          </div>
-          <div class="glass-card stat-card">
-            <span class="stat-card-title">Tournaments</span>
-            <div class="stat-card-value" id="dash-tourneys">-</div>
-            <div class="stat-card-footer">
-              <i data-lucide="award" style="width:14px;height:14px;"></i>
-              <span>Multi-school matches</span>
-            </div>
-          </div>
+          
+          <!-- Card 2: Team Stroke Average -->
           <div class="glass-card stat-card">
             <span class="stat-card-title">Team Stroke Avg</span>
-            <div class="stat-card-value" id="dash-avg-score">-</div>
-            <div class="stat-card-footer">
+            <div class="stat-card-value" style="margin-top: 8px;">
+              <span id="dash-avg-score">-</span>
+              <span style="font-size: 16px; color: var(--color-text-muted); font-weight: 500; margin-left: 4px;">strokes</span>
+            </div>
+            <div class="stat-card-footer" style="margin-top: 12px;">
               <i data-lucide="sparkles" style="width:14px;height:14px;color:var(--color-accent)"></i>
-              <span>Scoring average</span>
+              <span>Normalized average over played rounds</span>
             </div>
           </div>
         </div>
