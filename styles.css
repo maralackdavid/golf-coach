@@ -1992,6 +1992,74 @@ th.sticky-col-right-1 {
   }
 }
 
+/* Landscape & Table Scroll Optimizations */
+@media (max-width: 932px) and (max-height: 480px) and (orientation: landscape) {
+  .mobile-header-bar {
+    height: 38px !important;
+    padding-top: 0 !important;
+  }
+  .mobile-logo-text {
+    font-size: 13px !important;
+  }
+  .mobile-logo-icon {
+    width: 22px !important;
+    height: 22px !important;
+  }
+  .mobile-team-selector .team-btn {
+    height: 24px !important;
+    padding: 2px 8px !important;
+    font-size: 10px !important;
+  }
+  .icon-action-btn {
+    width: 30px !important;
+    height: 30px !important;
+  }
+  .main-content {
+    padding-top: calc(38px + 8px) !important;
+    padding-bottom: calc(48px + 8px) !important;
+  }
+  .mobile-nav {
+    height: 44px !important;
+    padding-bottom: 0 !important;
+  }
+  .mobile-nav .nav-item {
+    padding: 2px 0 !important;
+  }
+  .mobile-nav .nav-item svg {
+    width: 14px !important;
+    height: 14px !important;
+  }
+  .mobile-nav .nav-item span {
+    font-size: 8px !important;
+  }
+  
+  /* Modal height adjustment for landscape so they don't clip */
+  .modal-content {
+    max-height: 96vh !important;
+    padding: 12px 16px !important;
+  }
+  .modal-content::before {
+    margin-bottom: 8px !important;
+  }
+}
+
+/* Sticky row labels for scorecard entry matrices so labels never scroll out of view */
+.scorecard-entry-table .row-label {
+  position: sticky !important;
+  left: 0 !important;
+  z-index: 5 !important;
+  background-color: var(--bg-tertiary) !important;
+  border-right: 2px solid var(--border-glass) !important;
+  box-shadow: 2px 0 5px rgba(0,0,0,0.3) !important;
+  font-weight: 700 !important;
+  white-space: nowrap !important;
+}
+
+/* Keep the parent tr from rendering backgrounds over sticky row labels */
+.scorecard-entry-table tr:hover td.row-label {
+  background-color: var(--bg-tertiary) !important;
+}
+
 /* Animations */
 @keyframes scaleIn {
   from {

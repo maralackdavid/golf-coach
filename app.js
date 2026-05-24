@@ -1417,11 +1417,11 @@ function renderMatchScoreboard(matchId) {
   // Build spreadsheet header row
   let headerHtml = `<thead><tr>
     <th>Playing Order</th>
-    <th class="col-player">Player</th>
+    <th class="col-player sticky-col-left-1" style="width: 150px;">Player</th>
     <th>School</th>
     <th>Seed Played</th>
     <th>Ranking</th>
-    <th>Total Score</th>`;
+    <th class="sticky-col-right-1" style="width: 80px;">Total Score</th>`;
   
   for (let i = 1; i <= holesCount; i++) {
     headerHtml += `<th>Hole ${i}</th>`;
@@ -1451,11 +1451,11 @@ function renderMatchScoreboard(matchId) {
 
     let rowHtml = `<tr class="${yellowClass}">
       <td>${idx + 1}</td>
-      <td class="col-player ${yellowClass}" ${item.isRoster ? `style="cursor:pointer;color:var(--color-accent); font-weight:600;" onclick="openPlayerProfileModal('${item.id}', '${match.id}')"` : ""}>${item.name}</td>
+      <td class="col-player sticky-col-left-1 ${yellowClass}" ${item.isRoster ? `style="cursor:pointer;color:var(--color-accent); font-weight:600;" onclick="openPlayerProfileModal('${item.id}', '${match.id}')"` : ""}>${item.name}</td>
       <td>${item.school}</td>
       <td>${item.seed}</td>
       <td>${formatOrdinal(item.rank)}</td>
-      <td class="${highlightClass}">${item.stroke}</td>`;
+      <td class="sticky-col-right-1 ${highlightClass}">${item.stroke}</td>`;
 
     // Hole score cells with par relation highlights
     for (let i = 0; i < holesCount; i++) {
@@ -1481,6 +1481,7 @@ function renderMatchScoreboard(matchId) {
     rowHtml += `</tr>`;
     
     const tr = document.createElement("tr");
+    tr.className = yellowClass;
     tr.innerHTML = rowHtml;
     tbody.appendChild(tr);
   });
