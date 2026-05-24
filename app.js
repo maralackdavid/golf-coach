@@ -997,8 +997,7 @@ function renderScheduleGrid() {
 
   // Build Header Row
   let headerHtml = `<tr>
-    <th class="sticky-col-left-1" style="width: 150px;">Player</th>
-    <th class="sticky-col-left-2" style="width: 80px;">Current Seed</th>`;
+    <th class="sticky-col-left-1" style="width: 150px;">Player</th>`;
   
   playedMatches.forEach(m => {
     const displayLabel = m.overrideWinLose && m.overrideWinLose !== "Win" && m.overrideWinLose !== "Lose" 
@@ -1019,9 +1018,8 @@ function renderScheduleGrid() {
                      onclick="initNewMatchModal()">
     <div style="font-size: 16px; color: var(--color-accent); font-weight: bold; margin-bottom: 2px;">+</div>
     <div style="font-size:9px;color:var(--color-text-muted);font-weight:400;text-transform:uppercase;letter-spacing:0.5px;">Add Match</div>
-  </th>`;
+  </th></tr>`;
 
-  headerHtml += `<th class="sticky-col-right-1" style="width: 100px;">Stroke Avg</th></tr>`;
   table.innerHTML = headerHtml;
 
   // Build Player Rows
@@ -1030,8 +1028,7 @@ function renderScheduleGrid() {
     const yellowClass = p.highlighted ? "cell-player-yellow" : "";
     
     let rowHtml = `<tr class="${yellowClass}">
-      <td class="col-player sticky-col-left-1 ${yellowClass}" onclick="openPlayerProfileModal('${p.id}')" style="cursor:pointer;color:var(--color-accent);">${p.name}</td>
-      <td class="sticky-col-left-2 ${yellowClass}">${seedRankMap[p.id] || "-"}</td>`;
+      <td class="col-player sticky-col-left-1 ${yellowClass}" onclick="openPlayerProfileModal('${p.id}')" style="cursor:pointer;color:var(--color-accent);">${p.name}</td>`;
 
     playedMatches.forEach(m => {
       const matchAnalysis = analyzeMatchScoring(m, teamPlayers);
@@ -1054,9 +1051,7 @@ function renderScheduleGrid() {
     });
 
     // Blank column placeholder matching the "+ Add Match" column
-    rowHtml += `<td style="border: 1px dashed rgba(255,255,255,0.03); background: rgba(255,255,255,0.005);"></td>`;
-
-    rowHtml += `<td class="sticky-col-right-1 ${yellowClass}">${metrics.avgScore}</td></tr>`;
+    rowHtml += `<td style="border: 1px dashed rgba(255,255,255,0.03); background: rgba(255,255,255,0.005);"></td></tr>`;
     
     const rowEl = document.createElement("tr");
     rowEl.innerHTML = rowHtml;
@@ -1078,8 +1073,7 @@ function renderScheduleGrid() {
     if (f.key === "winlose") rowClass = "";
 
     let footerHtml = `<tr class="${rowClass}">
-      <td class="col-player sticky-col-left-1 ${rowClass}">${f.label}</td>
-      <td class="sticky-col-left-2 ${rowClass}"></td>`;
+      <td class="col-player sticky-col-left-1 ${rowClass}">${f.label}</td>`;
 
     playedMatches.forEach(m => {
       const analysis = analyzeMatchScoring(m, teamPlayers);
@@ -1124,9 +1118,7 @@ function renderScheduleGrid() {
     });
 
     // Blank column placeholder matching the "+ Add Match" column in footer rows
-    footerHtml += `<td style="border: 1px dashed rgba(255,255,255,0.03); background: rgba(255,255,255,0.005);"></td>`;
-
-    footerHtml += `<td class="sticky-col-right-1 ${rowClass}"></td></tr>`;
+    footerHtml += `<td style="border: 1px dashed rgba(255,255,255,0.03); background: rgba(255,255,255,0.005);"></td></tr>`;
     
     const footEl = document.createElement("tr");
     footEl.className = rowClass;
