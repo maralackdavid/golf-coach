@@ -3036,6 +3036,14 @@ function triggerMobileRestore() {
   if (menu) menu.classList.remove("active");
 }
 
+function triggerMobileReset() {
+  resetDatabase();
+  // Close menu
+  const menu = document.getElementById("mobile-actions-dropdown");
+  if (menu) menu.classList.remove("active");
+}
+
+
 // Global click listener to close mobile menu when tapping outside
 document.addEventListener("click", (event) => {
   const menu = document.getElementById("mobile-actions-dropdown");

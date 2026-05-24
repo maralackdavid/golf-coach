@@ -60,6 +60,10 @@
           <i data-lucide="upload"></i>
           <span>Restore Backup</span>
         </div>
+        <div class="dropdown-item" onclick="triggerMobileReset()" style="color: var(--color-lose); border-top: 1px solid var(--border-glass-light); border-radius: 0 0 6px 6px;">
+          <i data-lucide="refresh-cw" style="color: var(--color-lose);"></i>
+          <span>Reset Defaults</span>
+        </div>
       </div>
     </div>
   </header>
@@ -146,24 +150,16 @@
             <span>Restore Backup</span>
             <input type="file" id="input-import-db" accept=".json" style="display:none;">
           </label>
+          <button class="btn btn-danger" style="margin:0;" onclick="resetDatabase()">
+            <i data-lucide="refresh-cw"></i>
+            <span>Reset Defaults</span>
+          </button>
           <button class="btn btn-primary" id="btn-record-match" onclick="initNewMatchModal()">
             <i data-lucide="plus-circle"></i>
             <span>Record Match</span>
           </button>
         </div>
       </header>
-      
-      <!-- Dynamic Data Operations Panel -->
-      <section class="backup-section">
-        <div class="backup-section-text">
-          <h4>Need to reset or load mock data?</h4>
-          <p>You can restore your season grid to default data matching your screenshot roster at any time.</p>
-        </div>
-        <button class="btn btn-danger" style="padding: 6px 12px; font-size:12px;" onclick="resetDatabase()">
-          <i data-lucide="refresh-cw"></i>
-          <span>Reset defaults</span>
-        </button>
-      </section>
 
       <!-- ==========================================================================
            TAB VIEW: 1. DASHBOARD OVERVIEW
