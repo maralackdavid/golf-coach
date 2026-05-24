@@ -1527,3 +1527,481 @@ th.sticky-col-right-1 {
   }
 }
 
+/* ==========================================================================
+   MOBILE & IPHONE RESPONSIVE STYLING (Screen width <= 768px)
+   ========================================================================== */
+@media (max-width: 768px) {
+  /* Layout Root overrides */
+  body {
+    overflow-x: hidden;
+  }
+  
+  .app-container {
+    display: block !important;
+    width: 100vw !important;
+    min-height: 100vh !important;
+    overflow-x: hidden !important;
+  }
+  
+  /* Sidebar Navigation hidden on mobile in favor of bottom tab bar */
+  .sidebar {
+    display: none !important;
+  }
+  
+  /* Main content padding optimized for dynamic notch and home indicator safe areas */
+  .main-content {
+    padding: calc(64px + env(safe-area-inset-top)) 16px calc(72px + env(safe-area-inset-bottom)) 16px !important;
+    width: 100% !important;
+    overflow-x: hidden !important;
+  }
+  
+  /* Hide desktop header-row */
+  .header-row {
+    display: none !important;
+  }
+  
+  /* --------------------------------------------------------------------------
+     Mobile Header Bar & Brand Branding
+     -------------------------------------------------------------------------- */
+  .mobile-header-bar {
+    display: flex !important;
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: calc(56px + env(safe-area-inset-top));
+    padding: env(safe-area-inset-top) 16px 0 16px;
+    align-items: center;
+    justify-content: space-between;
+    background-color: var(--bg-glass);
+    border-bottom: 1px solid var(--border-glass);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    z-index: 90;
+    box-shadow: var(--shadow-sm);
+  }
+  
+  .mobile-brand {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  
+  .mobile-logo-icon {
+    background: linear-gradient(135deg, var(--color-accent), #047857);
+    width: 28px;
+    height: 28px;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #ffffff;
+    box-shadow: 0 2px 8px rgba(16, 185, 129, 0.2);
+  }
+  
+  .mobile-logo-text {
+    font-family: var(--font-header);
+    font-weight: 700;
+    font-size: 16px;
+    background: linear-gradient(to right, var(--color-text-primary), var(--color-accent));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    letter-spacing: -0.5px;
+  }
+  
+  .mobile-team-selector {
+    background-color: rgba(0, 0, 0, 0.3) !important;
+    border: 1px solid var(--border-glass-light) !important;
+    padding: 2px !important;
+    border-radius: 10px !important;
+    display: flex !important;
+    width: auto !important;
+  }
+  
+  .mobile-team-selector .team-btn {
+    padding: 6px 12px !important;
+    font-size: 11px !important;
+    border-radius: 8px !important;
+    font-weight: 700 !important;
+    min-height: auto !important;
+    height: 28px !important;
+  }
+  
+  .mobile-header-actions {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    position: relative;
+  }
+  
+  .icon-action-btn {
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid var(--border-glass-light);
+    color: var(--color-text-secondary);
+    width: 36px;
+    height: 36px;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: var(--transition-fast);
+  }
+  
+  .icon-action-btn:active {
+    background-color: var(--bg-glass-active);
+    border-color: var(--border-glass);
+    color: var(--color-accent);
+    transform: scale(0.95);
+  }
+  
+  .icon-action-btn svg {
+    width: 18px;
+    height: 18px;
+  }
+  
+  /* Mobile Actions Dropdown Sheet */
+  .mobile-actions-dropdown {
+    position: absolute;
+    top: 44px;
+    right: 0;
+    background-color: var(--bg-secondary);
+    border: 1px solid var(--border-glass);
+    border-radius: var(--radius-md);
+    padding: 6px;
+    min-width: 160px;
+    box-shadow: var(--shadow-lg);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    display: none;
+    flex-direction: column;
+    gap: 2px;
+    z-index: 1000;
+    transform-origin: top right;
+    animation: scaleIn 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
+  }
+  
+  .mobile-actions-dropdown.active {
+    display: flex;
+  }
+  
+  .dropdown-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 12px;
+    font-size: 13px;
+    color: var(--color-text-secondary);
+    border-radius: 6px;
+    cursor: pointer;
+    transition: var(--transition-fast);
+  }
+  
+  .dropdown-item:active {
+    background-color: var(--bg-glass-active);
+    color: var(--color-accent);
+  }
+  
+  .dropdown-item svg {
+    width: 16px;
+    height: 16px;
+  }
+  
+  /* --------------------------------------------------------------------------
+     Mobile Bottom Navigation Bar
+     -------------------------------------------------------------------------- */
+  .mobile-nav {
+    display: flex !important;
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: calc(60px + env(safe-area-inset-bottom));
+    padding-bottom: env(safe-area-inset-bottom);
+    background-color: var(--bg-glass);
+    border-top: 1px solid var(--border-glass);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    z-index: 90;
+    justify-content: space-around;
+    align-items: center;
+    box-shadow: 0 -4px 16px rgba(0, 0, 0, 0.15);
+  }
+  
+  .mobile-nav .nav-item {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 4px;
+    padding: 6px 0;
+    height: 100%;
+    border: none !important;
+    background: none !important;
+    border-radius: 0 !important;
+    color: var(--color-text-muted) !important;
+    font-size: 10px !important;
+    font-weight: 500 !important;
+    transition: var(--transition-fast);
+    min-height: auto !important;
+  }
+  
+  .mobile-nav .nav-item svg {
+    width: 18px;
+    height: 18px;
+    color: var(--color-text-muted);
+    transition: var(--transition-fast);
+  }
+  
+  .mobile-nav .nav-item.active {
+    background: none !important;
+    color: var(--color-accent) !important;
+    font-weight: 600 !important;
+  }
+  
+  .mobile-nav .nav-item.active svg {
+    color: var(--color-accent) !important;
+    transform: scale(1.1);
+  }
+  
+  .mobile-nav .nav-item:active {
+    transform: scale(0.95);
+  }
+  
+  /* --------------------------------------------------------------------------
+     Native-Style Slide-Up Drawers (Modals)
+     -------------------------------------------------------------------------- */
+  .modal-backdrop {
+    align-items: flex-end !important;
+    justify-content: center !important;
+    background-color: rgba(5, 20, 11, 0.7) !important;
+  }
+  
+  .modal-content {
+    border-bottom-left-radius: 0 !important;
+    border-bottom-right-radius: 0 !important;
+    border-top-left-radius: 20px !important;
+    border-top-right-radius: 20px !important;
+    max-width: 100% !important;
+    max-height: 92% !important;
+    padding: 20px 16px calc(24px + env(safe-area-inset-bottom)) 16px !important;
+    transform: translateY(100%) !important;
+    transition: transform var(--transition-normal) cubic-bezier(0.32, 0.94, 0.6, 1) !important;
+    box-shadow: 0 -8px 32px rgba(0, 0, 0, 0.5) !important;
+    border-left: none !important;
+    border-right: none !important;
+    border-bottom: none !important;
+  }
+  
+  /* Sleek pull grab handle at the top of drawers */
+  .modal-content::before {
+    content: "";
+    display: block;
+    width: 36px;
+    height: 5px;
+    background-color: var(--color-text-muted);
+    opacity: 0.25;
+    border-radius: 3px;
+    margin: -8px auto 16px auto;
+  }
+  
+  .modal-backdrop.active .modal-content {
+    transform: translateY(0) !important;
+  }
+  
+  .modal-header h3 {
+    font-size: 18px !important;
+  }
+  
+  .modal-tabs {
+    overflow-x: auto;
+    white-space: nowrap;
+    -webkit-overflow-scrolling: touch;
+    gap: 4px !important;
+    margin-bottom: 16px !important;
+  }
+  
+  .modal-tab-btn {
+    padding: 8px 12px !important;
+    font-size: 12px !important;
+    flex-shrink: 0;
+    min-height: auto !important;
+  }
+  
+  /* --------------------------------------------------------------------------
+     High-Touch Form Controls & Buttons
+     -------------------------------------------------------------------------- */
+  button, 
+  .btn,
+  select,
+  input,
+  label.btn {
+    min-height: 44px; /* Apple HIG minimum touch target size */
+  }
+  
+  select,
+  .team-btn,
+  .modal-tab-btn,
+  .close-btn {
+    min-height: 36px; /* SNug fit but compliant */
+  }
+  
+  input[type="radio"],
+  input[type="checkbox"] {
+    min-width: 22px;
+    min-height: 22px;
+  }
+  
+  .form-actions {
+    margin-top: 24px !important;
+    gap: 12px !important;
+  }
+  
+  .form-actions .btn {
+    flex: 1;
+    justify-content: center;
+  }
+  
+  /* --------------------------------------------------------------------------
+     Scrollable Spreadsheet Sheets & Matrices
+     -------------------------------------------------------------------------- */
+  .spreadsheet-container {
+    overflow-x: auto !important;
+    -webkit-overflow-scrolling: touch !important; /* Momentum scrolling iOS */
+  }
+  
+  .spreadsheet-container::-webkit-scrollbar {
+    height: 4px;
+  }
+  
+  /* Scorecard entry table horizontal safety */
+  .scorecard-entry-table {
+    min-width: 680px !important; /* Keep columns distinct and wide enough to prevent squishing */
+  }
+  
+  .scorecard-entry-table select.hole-par-select {
+    min-height: 28px !important; /* Extremely neat and fits header cells perfectly */
+    padding: 2px 4px !important;
+  }
+  
+  /* --------------------------------------------------------------------------
+     Inline Grids & Cards Layout Collapse Override System
+     -------------------------------------------------------------------------- */
+  /* Collapses all double and multi-column layouts into beautiful scrollable single-column stacks */
+  .player-profile-grid-top,
+  .player-profile-grid-bottom,
+  .stats-grid,
+  .form-row,
+  .dashboard-row,
+  .dashboard-grid-layout,
+  .schedule-view-grid,
+  .scoreboard-split-grid {
+    grid-template-columns: 1fr !important;
+    gap: 16px !important;
+  }
+  
+  /* Catch all inline-styled grids that would blow out screen widths */
+  div[style*="grid-template-columns: 1fr 1fr"],
+  div[style*="grid-template-columns: 1.2fr 1.8fr"],
+  div[style*="grid-template-columns: repeat(3, 1fr)"],
+  div[style*="grid-template-columns: 1fr 1fr 1fr"],
+  div[style*="grid-template-columns: repeat(4, 1fr)"] {
+    grid-template-columns: 1fr !important;
+    gap: 16px !important;
+  }
+  
+  div[style*="display:grid"] {
+    grid-template-columns: 1fr !important;
+    gap: 16px !important;
+  }
+  
+  /* --------------------------------------------------------------------------
+     Snug Card & Spacing Downscaling
+     -------------------------------------------------------------------------- */
+  .glass-card {
+    padding: 16px !important;
+    border-radius: var(--radius-md) !important;
+    margin-bottom: 16px !important;
+  }
+  
+  .card-header h2 {
+    font-size: 16px !important;
+  }
+  
+  .stat-card-value {
+    font-size: 26px !important;
+  }
+  
+  .logo-container {
+    padding-bottom: 20px !important;
+  }
+  
+  /* Limit chart heights to fit perfectly in viewport height */
+  canvas {
+    max-height: 200px !important;
+  }
+  
+  /* Back button spacing */
+  .btn-secondary[onclick="navigateBack()"] {
+    width: 100%;
+    justify-content: center;
+    margin-bottom: 16px;
+  }
+  
+  /* Backup Section adaptation */
+  .backup-section {
+    flex-direction: column !important;
+    gap: 16px !important;
+    padding: 16px !important;
+    align-items: stretch !important;
+    text-align: center;
+  }
+  
+  .backup-section-text {
+    text-align: center !important;
+  }
+  
+  .backup-actions-row {
+    flex-direction: column !important;
+    gap: 10px !important;
+  }
+  
+  .backup-actions-row .btn {
+    width: 100% !important;
+    justify-content: center;
+  }
+  
+  /* Match scoreboard adjustments */
+  .match-summary-card {
+    flex-direction: column !important;
+    gap: 12px !important;
+    text-align: center;
+    padding: 16px !important;
+  }
+  
+  .match-summary-card div {
+    border-bottom: 1px solid var(--border-glass-light);
+    padding-bottom: 8px;
+    width: 100%;
+  }
+  
+  .match-summary-card div:last-child {
+    border-bottom: none;
+    padding-bottom: 0;
+  }
+}
+
+/* Animations */
+@keyframes scaleIn {
+  from {
+    opacity: 0;
+    transform: scale(0.95) translateY(-5px);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+}
+
+

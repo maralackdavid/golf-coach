@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
   
   <!-- SEO Optimization -->
   <title>High School Golf Analytics | High School Golf Coach Dashboard & Season Tracker</title>
@@ -19,6 +19,50 @@
   <script src="https://unpkg.com/lucide@latest"></script>
 </head>
 <body>
+
+  <!-- ==========================================================================
+       MOBILE TOP HEADER BAR
+       ========================================================================== -->
+  <header class="mobile-header-bar">
+    <div class="mobile-brand">
+      <div class="mobile-logo-icon">
+        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="12" cy="12" r="10"></circle>
+          <path d="M12 2a14.5 14.5 0 0 0 0 20 14.5 14.5 0 0 0 0-20"></path>
+          <path d="M2 12a14.5 14.5 0 0 0 20 0 14.5 14.5 0 0 0-20 0"></path>
+        </svg>
+      </div>
+      <span class="mobile-logo-text">HS Golf</span>
+    </div>
+    
+    <div class="mobile-header-center">
+      <div class="team-selector mobile-team-selector">
+        <button class="team-btn active" data-team="Varsity" onclick="switchTeam('Varsity')">Varsity</button>
+        <button class="team-btn" data-team="JV" onclick="switchTeam('JV')">JV</button>
+      </div>
+    </div>
+    
+    <div class="mobile-header-actions">
+      <button class="icon-action-btn" onclick="openModal('quick-player-modal')" title="Quick Add Player">
+        <i data-lucide="user-plus"></i>
+      </button>
+      <button class="icon-action-btn" id="btn-mobile-actions-trigger" onclick="toggleMobileActionsMenu(event)" title="More Actions">
+        <i data-lucide="more-vertical"></i>
+      </button>
+      
+      <!-- Mobile Quick Actions Dropdown Menu -->
+      <div class="mobile-actions-dropdown" id="mobile-actions-dropdown">
+        <div class="dropdown-item" onclick="triggerMobileBackup()">
+          <i data-lucide="download"></i>
+          <span>Backup Data</span>
+        </div>
+        <div class="dropdown-item" onclick="triggerMobileRestore()">
+          <i data-lucide="upload"></i>
+          <span>Restore Backup</span>
+        </div>
+      </div>
+    </div>
+  </header>
 
   <div class="app-container">
     
@@ -784,6 +828,32 @@
       </form>
     </div>
   </div>
+
+  <!-- ==========================================================================
+       MOBILE BOTTOM NAVIGATION BAR
+       ========================================================================== -->
+  <nav class="mobile-nav">
+    <div class="nav-item active" data-tab="dashboard" onclick="navigateTo('dashboard')">
+      <i data-lucide="layout-dashboard"></i>
+      <span>Dashboard</span>
+    </div>
+    <div class="nav-item" data-tab="schedule" onclick="navigateTo('schedule')">
+      <i data-lucide="calendar"></i>
+      <span>Schedule</span>
+    </div>
+    <div class="nav-item" data-tab="scoreboard" onclick="navigateTo('scoreboard')">
+      <i data-lucide="sheet"></i>
+      <span>Scoreboard</span>
+    </div>
+    <div class="nav-item" data-tab="roster" onclick="navigateTo('roster')">
+      <i data-lucide="users"></i>
+      <span>Roster</span>
+    </div>
+    <div class="nav-item" data-tab="metrics" onclick="navigateTo('metrics')">
+      <i data-lucide="bar-chart-3"></i>
+      <span>Metrics</span>
+    </div>
+  </nav>
 
   <!-- Core Javascript imports order -->
   <script src="data.js"></script>

@@ -3011,3 +3011,46 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   }
 });
+
+// ==========================================================================
+// Mobile Responsive UI Interactivity Helpers
+// ==========================================================================
+function toggleMobileActionsMenu(event) {
+  if (event) event.stopPropagation();
+  const menu = document.getElementById("mobile-actions-dropdown");
+  if (menu) {
+    menu.classList.toggle("active");
+  }
+}
+
+function triggerMobileBackup() {
+  const btn = document.getElementById("btn-export-db");
+  if (btn) {
+    btn.click();
+  }
+  // Close menu
+  const menu = document.getElementById("mobile-actions-dropdown");
+  if (menu) menu.classList.remove("active");
+}
+
+function triggerMobileRestore() {
+  const input = document.getElementById("input-import-db");
+  if (input) {
+    input.click();
+  }
+  // Close menu
+  const menu = document.getElementById("mobile-actions-dropdown");
+  if (menu) menu.classList.remove("active");
+}
+
+// Global click listener to close mobile menu when tapping outside
+document.addEventListener("click", (event) => {
+  const menu = document.getElementById("mobile-actions-dropdown");
+  const trigger = document.getElementById("btn-mobile-actions-trigger");
+  if (menu && menu.classList.contains("active")) {
+    if (!menu.contains(event.target) && (!trigger || !trigger.contains(event.target))) {
+      menu.classList.remove("active");
+    }
+  }
+});
+
